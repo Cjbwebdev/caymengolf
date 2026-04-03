@@ -3,44 +3,61 @@
 {% block content %}
 <section class="bg-gradient-to-br from-golf-800 to-golf-900 text-white py-16 text-center">
     <div class="max-w-7xl mx-auto px-4">
-        <h1 class="font-display text-5xl font-bold mb-3">🏌️‍♂️ Book a Lesson with Dan</h1>
-        <p class="text-golf-200 text-lg">PGA Qualified Professional Instruction. Book your 45-minute slot online.</p>
+        <h1 class="font-display text-5xl font-bold mb-3">🏌️‍♂️ PGA Lessons with Dan</h1>
+        <p class="text-golf-200 text-lg">Instruction at Cayman Golf, Brixham</p>
     </div>
 </section>
-
-<section class="py-12">
-    <div class="max-w-4xl mx-auto px-4">
-        <form method="get" class="flex gap-3 mb-8">
-            <input type="date" name="date" value="{{ selected_date }}" min="{{ min_date }}" max="{{ max_date }}" 
-                   class="border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500">
-            <button type="submit" class="bg-golf-600 text-white px-6 py-3 rounded-lg hover:bg-golf-700 transition font-bold">Find Slots</button>
-        </form>
-
-        {% if available_slots %}
-        <div class="space-y-3">
-            {% for slot in available_slots %}
-            <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex justify-between items-center">
-                <div>
-                    <span class="font-display text-xl font-bold text-golf-900">{{ slot.time|time:"H:i" }}</span>
-                    <span class="text-gray-500 ml-2 text-sm">• 45 min Lesson</span>
-                </div>
-                {% if user.is_authenticated %}
-                    <a href="/bookings/lesson/{{ slot.id }}/" class="bg-golf-600 text-white px-5 py-2 rounded-lg hover:bg-golf-700 transition font-bold">Book Lesson</a>
-                {% else %}
-                    <a href="/accounts/login/" class="text-golf-600 font-bold">Login to Book</a>
-                {% endif %}
+<section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+        <!-- Dan's Bio Section -->
+        <div class="grid md:grid-cols-2 gap-8 items-center mb-16">
+            <div class="rounded-2xl overflow-hidden shadow-lg">
+                <img src="https://images.pexels.com/photos/12904818/pexels-photo-12904818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="PGA Golf Lesson" class="w-full h-64 object-cover">
             </div>
-            {% endfor %}
+            <div>
+                <h2 class="font-display text-3xl font-bold text-golf-900 mb-4">Meet Your Instructor</h2>
+                <p class="text-xl font-bold text-golf-600 mb-4">Dan — PGA Qualified Professional</p>
+                <p class="text-gray-700 leading-relaxed mb-4">Dan is a fully qualified PGA Professional and the head instructor here at Cayman Golf in the beautiful Torbay area. With over 15 years of experience, he has coached players of all abilities, from juniors taking their first swings to seniors refining their game.</p>
+                <p class="text-gray-700 leading-relaxed">Dan specializes in building solid, repeatable swings tailored to your natural body movement. Whether you want to fix a slice, improve your short game, or prepare for your first competition, Dan provides the expert guidance you need to lower your scores.</p>
+            </div>
         </div>
-        {% else %}
-        <div class="bg-gray-50 rounded-xl p-8 text-center">
-            <p class="text-gray-500">No lesson slots available for this date. Try another day?</p>
+
+        <!-- Booking Form Section -->
+        <div class="bg-golf-50 rounded-2xl p-8 border border-golf-100 shadow-sm mb-12">
+            <h2 class="font-display text-2xl font-bold text-golf-900 mb-6 text-center">📅 Book a 45-Minute Lesson</h2>
+            
+            <form method="get" class="flex gap-3 mb-8 max-w-lg mx-auto">
+                <input type="date" name="date" value="{{ selected_date }}" min="{{ min_date }}" max="{{ max_date }}" 
+                       class="flex-1 border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500">
+                <button type="submit" class="bg-golf-600 text-white px-6 py-3 rounded-lg hover:bg-golf-700 transition font-bold">Find Slots</button>
+            </form>
+
+            {% if available_slots %}
+            <div class="space-y-3">
+                {% for slot in available_slots %}
+                <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition flex justify-between items-center">
+                    <div>
+                        <span class="font-display text-xl font-bold text-golf-900">{{ slot.time|time:"H:i" }}</span>
+                        <span class="text-gray-500 ml-2 text-sm">• 45 min Lesson</span>
+                    </div>
+                    {% if user.is_authenticated %}
+                        <a href="/bookings/lesson/{{ slot.id }}/" class="bg-golf-600 text-white px-5 py-2 rounded-lg hover:bg-golf-700 transition font-bold">Book Now</a>
+                    {% else %}
+                        <a href="/accounts/login/" class="text-golf-600 font-bold">Login to Book</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-white rounded-xl p-8 text-center border border-gray-100">
+                <p class="text-gray-500">No lesson slots available for this date. Try another day?</p>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
-        
-        <div class="mt-12 bg-blue-50 p-6 rounded-xl border border-blue-100">
-            <h3 class="font-bold text-lg mb-2">Meet Your Instructor: Dan</h3>
-            <p class="text-gray-600">Dan is a fully qualified PGA Professional based here at Cayman Golf, Brixham. With years of experience coaching players of all abilities—from complete beginners to competitive amateurs—Dan focuses on building a solid, repeatable swing tailored to your physiology. He specializes in short game precision and course management strategies.</p>
+
+        <div class="mt-12 bg-blue-50 p-6 rounded-xl border border-blue-100 text-center">
+            <h3 class="font-bold text-lg mb-2">Need more info?</h3>
+            <p class="text-gray-600">Call us on <a href="tel:01803845909" class="text-golf-600 font-bold hover:underline">01803 845909</a> or email <a href="mailto:danleins@hotmail.co.uk" class="text-golf-600 hover:underline">danleins@hotmail.co.uk</a></p>
         </div>
     </div>
 </section>
