@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}PGA Golf Lessons with Dan — Cayman Golf Brixham{% endblock %}
+{% block content %}
+<section class="bg-gradient-to-br from-golf-800 to-golf-900 text-white py-16 text-center">
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="font-display text-5xl font-bold mb-3">🏌️ PGA Lessons with Dan</h1>
+        <p class="text-golf-200 text-lg max-w-2xl mx-auto">Improve your game with expert guidance from a certified PGA instructor. From beginners to advanced players.</p>
+    </div>
+</section>
+<section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+        {% if lesson_types %}
+        <div class="grid md:grid-cols-3 gap-6">
+            {% for lt in lesson_types %}
+            <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                <h3 class="font-display text-xl font-bold mb-2">{{ lt.name }}</h3>
+                <p class="text-gray-600 text-sm mb-4">{{ lt.description }}</p>
+                <div class="text-golf-600 font-bold text-lg mb-4">{{ lt.duration_minutes }} min — £{{ lt.price }}</div>
+                <a href="tel:01803845909" class="block text-center bg-golf-600 text-white py-2 rounded-lg hover:bg-golf-700 transition font-bold">
+                    Call 01803 845909
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center max-w-xl mx-auto">
+            <h2 class="font-display text-3xl font-bold text-golf-900 mb-4">Book a Lesson with Dan</h2>
+            <p class="text-gray-600 text-lg mb-6">Take your golf skills to the next level with expert instruction from a certified PGA professional. Whether you're a complete beginner or looking to refine your game, Dan offers tailored lessons for all abilities.</p>
+            <div class="bg-golf-50 rounded-xl p-6 border border-golf-100 mb-6">
+                <p class="text-golf-800 mb-2"><strong>📞 Call Dan directly:</strong></p>
+                <a href="tel:01803845909" class="text-2xl font-bold text-golf-600 hover:text-golf-700">01803 845909</a>
+            </div>
+            <p class="text-gray-500 text-sm">Lessons available on-site at the course. Equipment provided.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Submit Your Score — Cayman Golf{% endblock %}
+{% block content %}
+<section class="py-20">
+    <div class="max-w-xl mx-auto px-4">
+        <h1 class="font-display text-4xl font-bold text-golf-900 mb-2">🏌️ Submit Your Score</h1>
+        <p class="text-gray-600 mb-8">How did you play today?</p>
+        <form method="post" class="bg-white rounded-xl p-8 border border-gray-100 shadow-sm space-y-6">
+            {% csrf_token %}
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Date</label>
+                <input type="date" name="date" value="{{ today }}" required class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500 focus:border-transparent">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Total Score *</label>
+                    <input type="number" name="total_score" placeholder="72" required min="20" max="150" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Par</label>
+                    <input type="number" name="par" value="71" required min="36" max="72" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500 focus:border-transparent">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Front 9 (optional)</label>
+                    <input type="number" name="front_9" placeholder="36" min="1" max="70" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Back 9 (optional)</label>
+                    <input type="number" name="back_9" placeholder="35" min="1" max="70" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500 focus:border-transparent">
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-golf-600 text-white font-bold py-3 rounded-lg hover:bg-golf-700 transition text-lg">Submit Score</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.display_name }} - Cayman Golf Profile{% endblock %}
+{% block content %}
+<section class="bg-gradient-to-br from-golf-800 to-golf-900 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 flex items-center gap-6">
+        <div class="w-20 h-20 rounded-full bg-golf-700 flex items-center justify-center text-3xl font-bold">
+            {{ profile.display_name|first|upper }}
+        </div>
+        <div>
+            <h1 class="font-display text-3xl font-bold">{{ profile.display_name }}</h1>
+            <p class="text-golf-300">{{ profile.home_course }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="py-12">
+    <div class="max-w-7xl mx-auto px-4">
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-xl p-6 border border-gray-100 text-center shadow-sm">
+                <div class="font-display text-4xl font-bold text-golf-600">{% if profile.handicap_index %}{{ profile.handicap_index }}{% else %}—{% endif %}</div>
+                <div class="text-gray-500 text-sm mt-1">Handicap Index</div>
+            </div>
+            <div class="bg-white rounded-xl p-6 border border-gray-100 text-center shadow-sm">
+                <div class="font-display text-4xl font-bold text-golf-600">{{ rounds_played }}</div>
+                <div class="text-gray-500 text-sm mt-1">Rounds Played</div>
+            </div>
+            <div class="bg-white rounded-xl p-6 border border-gray-100 text-center shadow-sm">
+                <div class="font-display text-4xl font-bold text-golf-600">{% if average_score %}{{ average_score }}{% else %}—{% endif %}</div>
+                <div class="text-gray-500 text-sm mt-1">Avg Score</div>
+            </div>
+            <div class="bg-white rounded-xl p-6 border border-gray-100 text-center shadow-sm">
+                <div class="font-display text-4xl font-bold text-golf-600">{% if best_round %}{{ best_round }}{% else %}—{% endif %}</div>
+                <div class="text-gray-500 text-sm mt-1">Best Round</div>
+            </div>
+        </div>
+
+        <!-- Handicap Progress Chart -->
+        {% if handicap_progress %}
+        <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm mb-8">
+            <h2 class="font-display text-xl font-bold mb-4">📊 Handicap Progress</h2>
+            <canvas id="handicapChart" height="80"></canvas>
+        </div>
+        <script>
+            const data = JSON.parse('{{ handicap_progress|safe }}');
+            new Chart(document.getElementById('handicapChart'), {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.date),
+                    datasets: [{
+                        label: 'Handicap',
+                        data: data.map(d => d.handicap),
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(22,163,74,0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#16a34a',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, grid: { color: '#f3f4f6' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        </script>
+        {% endif %}
+
+        <!-- Recent Scores -->
+        <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-display text-xl font-bold">🏌️ Recent Scores</h2>
+                {% if user == profile.user %}
+                <a href="/golfers/submit-score/" class="bg-golf-600 text-white px-4 py-2 rounded-lg hover:bg-golf-700 transition text-sm font-bold">Submit Score</a>
+                {% endif %}
+            </div>
+            {% if recent_scores %}
+            <table class="w-full">
+                <thead><tr class="border-b border-gray-100 text-gray-500 text-sm"><th class="text-left py-2">Date</th><th class="text-center py-2">Score</th><th class="text-center py-2">Par</th><th class="text-center py-2">To Par</th></tr></thead>
+                <tbody>
+                {% for s in recent_scores %}
+                <tr class="border-b border-gray-50">
+                    <td class="py-3 text-sm">{{ s.date|date:"j M Y" }}</td>
+                    <td class="py-3 text-center font-bold text-golf-900">{{ s.total_score }}</td>
+                    <td class="py-3 text-center text-gray-500">{{ s.par }}</td>
+                    {% if s.total_score > s.par %}
+                    <td class="py-3 text-center text-red-600 font-bold">+{{ s.total_score|add:0|add:-s.par }}</td>
+                    {% elif s.total_score < s.par %}
+                    <td class="py-3 text-center text-green-600 font-bold">{{ s.total_score|add:0|add:-s.par }}</td>
+                    {% else %}
+                    <td class="py-3 text-center text-gray-900 font-bold">E</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-gray-500 text-center py-8">No scores submitted yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

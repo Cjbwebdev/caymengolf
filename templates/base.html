@@ -1,0 +1,108 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Cayman Golf Brixham  18-Hole Cayman Golf Course{% endblock %}</title>
+    <meta name="description" content="{% block meta %}Cayman Golf Brixham  18-hole par 71 course in Churston Ferrers. Family-friendly golf with PGA lessons, FootGolf refreshments on-site.{% endblock %}">
+    <link rel="canonical" href="https://caymangolf.site{{ request.path }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        display: ['Oswald'],
+                    },
+                    colors: {
+                        golf: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0',
+                            300: '#86efac', 400: '#4ade80', 500: '#22c55e', 
+                            600: '#16a34a', 700: '#15803d', 800: '#166534', 
+                            900: '#14532d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="font-sans text-gray-900 bg-white">
+
+<!-- NAVBAR -->
+<nav class="bg-white/95 backdrop-blur fixed top-0 w-full z-50 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <a href="/" class="flex items-center gap-2">
+                    <svg class="w-8 h-8 text-golf-600" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/></svg>
+                    <span class="font-display text-xl font-bold text-golf-900">CAYMAN GOLF</span>
+                </a>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="/" class="text-sm font-medium hover:text-golf-600 transition">Home</a>
+                <a href="/about/" class="text-sm font-medium hover:text-golf-600 transition">About</a>
+                <a href="/bookings/" class="text-sm font-medium hover:text-golf-600 transition">Book a Tee Time</a>
+                <a href="/lessons/" class="text-sm font-medium hover:text-golf-600 transition">PGA Lessons</a>
+                <a href="/leaderboard/" class="text-sm font-medium hover:text-golf-600 transition">Leaderboard</a>
+                {% if user.is_authenticated %}
+                    <a href="/golfers/profile/" class="text-sm font-medium hover:text-golf-600 transition">My Profile</a>
+                    <a href="/accounts/logout/" class="bg-golf-600 text-white px-4 rounded-lg hover:bg-golf-700 transition text-sm">Logout</a>
+                {% else %}
+                    <a href="/accounts/login/" class="text-sm font-medium hover:text-golf-600 transition">Login</a>
+                    <a href="/golfers/signup/" class="bg-golf-600 text-white px-4 rounded-lg hover:bg-golf-700 transition text-sm">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% if messages %}
+<div class="max-w-7xl mx-auto px-6 pt-20">
+    {% for msg in messages %}
+    <div class="p-4 mb-2 rounded-xl {% if msg.tags == 'success' %}bg-golf-50 text-golf-800 border border-golf-200{% else %}bg-red-50 text-red-800 border border-red-200{% endif %}">
+        {{ msg }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<main class="pt-16">{% block content %}{% endblock %}</main>
+
+<!-- FOOTER -->
+<footer class="bg-golf-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="font-display text-lg font-bold mb-3">CAYMAN GOLF BRIXHAM</h3>
+                <p class="text-golf-300 text-sm leading-relaxed">18-hole, par 71 course in Churston Ferrers, Brixham. Family-friendly golf with equipment provided.</p>
+                <p class="mt-3 text-golf-300 text-sm">📞 01803 845909</p>
+            </div>
+            <div>
+                <h3 class="font-display text-lg font-bold mb-3">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="/" class="text-golf-300 text-sm hover:text-white transition">Home</a></li>
+                    <li><a href="/about/" class="text-golf-300 text-sm hover:text-white transition">About the Course</a></li>
+                    <li><a href="/bookings/" class="text-golf-300 text-sm hover:text-white transition">Book a Tee Time</a></li>
+                    <li><a href="/lessons/" class="text-golf-300 text-sm hover:text-white transition">PGA Lessons with Dan</a></li>
+                    <li><a href="/leaderboard/" class="text-golf-300 text-sm hover:text-white transition">Club Leaderboard</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-display text-lg font-bold mb-3">Location</h3>
+                <p class="text-golf-300 text-sm leading-relaxed">Dartmouth Road, Churston Ferrers, Brixham, Devon</p>
+                <a href="https://maps.google.com/?q=Cayman+Golf+Brixham" target="_blank" class="inline-block mt-2 text-golf-400 text-sm hover:text-white transition">Get Directions →</a>
+            </div>
+        </div>
+        <div class="border-t border-golf-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-golf-400">
+            <p>&copy; Cayman Golf Brixham</p>
+            <p>Website by <a href="https://cjbwebdevelopment.com" target="_blank" class="text-golf-300 hover:text-white transition">CJB Web Development</a></p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

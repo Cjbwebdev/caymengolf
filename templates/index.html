@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Cayman Golf - 18 Hole Cayman Golf Course in Brixham, Devon{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<section class="relative bg-gradient-to-br from-golf-900 via-golf-800 to-golf-700 text-white overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1200 600"><circle cx="1050" cy="-100" r="300" fill="#22c55e" opacity="0.1"/><circle cx="-50" cy="300" r="200" fill="#22c55e" opacity="0.05"/></svg>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 py-32 md:py-44 relative">
+        <div class="max-w-2xl">
+            <div class="inline-block bg-golf-500/20 border border-golf-400/30 rounded-full px-4 py-1 text-golf-300 text-sm mb-6">18-Hole Course, Churston Ferrers</div>
+            <h1 class="font-display text-5xl md:text-7xl font-bold leading-tight mb-6">A Great Day Out<br>at <span class="text-golf-400">Cayman Golf</span></h1>
+            <p class="text-lg md:text-xl text-golf-200 mb-10 leading-relaxed">18-hole, par 71 cayman course in the beautiful Devon countryside. Perfect for families, beginners and seasoned golfers alike.</p>
+            <div class="flex flex-wrap gap-4">
+                <a href="/bookings/" class="bg-golf-400 text-golf-950 text-lg font-bold px-8 py-3 rounded-xl hover:bg-golf-300 transition">Book a Tee Time</a>
+                <a href="/lessons/" class="border-2 border-golf-400 text-golf-300 text-lg font-bold px-8 py-3 rounded-xl hover:bg-golf-400/10 transition">PGA Lessons</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="font-display text-4xl font-bold text-golf-900 mb-4">Perfect for Every Golfer</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto text-lg">From beginners to pros, our 18-hole course provides challenges for advanced players while remaining accessible for those just learning the game.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-golf-50 rounded-2xl p-8 border border-golf-100 hover:shadow-lg transition">
+                <div class="w-14 h-14 bg-golf-600 rounded-xl flex items-center justify-center mb-6 text-white text-2xl">⛳</div>
+                <h3 class="font-display text-xl font-bold mb-3">Cayman Golf Balls</h3>
+                <p class="text-gray-600 leading-relaxed">Our innovative 'Cayman' golf balls prioritize precision over distance, making the game more accessible. Equipment provided on-site.</p>
+            </div>
+            <div class="bg-golf-50 rounded-2xl p-8 border border-golf-100 hover:shadow-lg transition">
+                <div class="w-14 h-14 bg-golf-600 rounded-xl flex items-center justify-center mb-6 text-white text-2xl">👨‍👩‍👧‍👦</div>
+                <h3 class="font-display text-xl font-bold mb-3">Family Fun</h3>
+                <p class="text-gray-600 leading-relaxed">A fun day for the whole family! Special rates for families and groups, plus FootGolf for something different.</p>
+            </div>
+            <div class="bg-golf-50 rounded-2xl p-8 border border-golf-100 hover:shadow-lg transition">
+                <div class="w-14 h-14 bg-golf-600 rounded-xl flex items-center justify-center mb-6 text-white text-2xl">🏆</div>
+                <h3 class="font-display text-xl font-bold mb-3">PGA Lessons</h3>
+                <p class="text-gray-600 leading-relaxed">Improve your game with expert guidance from a certified PGA instructor. Book lessons directly through the site.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LEADERBOARD PREVIEW -->
+<section class="py-20 bg-golf-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center justify-between mb-10">
+            <div>
+                <h2 class="font-display text-4xl font-bold text-golf-900 mb-2">🏅 Weekly Leaderboard</h2>
+                <p class="text-gray-600">Best rounds this week. Think you can beat them?</p>
+            </div>
+            <a href="/leaderboard/" class="bg-golf-600 text-white px-6 py-2 rounded-lg hover:bg-golf-700 transition text-sm font-bold">View All →</a>
+        </div>
+        {% if week_best %}
+        <div class="bg-white rounded-2xl shadow-sm border border-golf-100 overflow-hidden">
+            {% for entry in week_best %}
+            <div class="flex items-center gap-4 px-6 py-4 {% if not forloop.last %}border-b border-gray-100{% endif %}">
+                <span class="w-10 h-10 rounded-full bg-golf-100 flex items-center justify-center font-bold text-golf-800 text-sm">{{ forloop.counter }}</span>
+                <div class="flex-1">
+                    <a href="/golfers/profile/{{ entry.golfer.user.username }}/" class="font-bold text-golf-900 hover:text-golf-600 transition">{{ entry.golfer.display_name }}</a>
+                    <span class="text-gray-500 text-sm ml-2">Par {{ entry.score }}</span>
+                </div>
+                <span class="font-display text-2xl font-bold text-golf-600">{{ entry.score }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-2xl p-8 border border-golf-100 text-center">
+            <p class="text-gray-500 mb-4">No scores submitted yet this week. Be the first!</p>
+            <a href="/golfers/submit-score/" class="inline-block bg-golf-600 text-white px-6 py-2 rounded-lg hover:bg-golf-700 transition text-sm font-bold">Submit Your Score</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- COFFEE -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="max-w-xl">
+            <h2 class="font-display text-4xl font-bold text-golf-900 mb-4">☕ Refreshments on Site</h2>
+            <p class="text-lg text-gray-600 leading-relaxed mb-6">Take a break and refuel at our brand-new coffee & refreshments van! Barista-style coffee, cool drinks, tasty snacks — all served conveniently on-site.</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 bg-golf-900 text-white text-center">
+    <div class="max-w-3xl mx-auto px-4">
+        <h2 class="font-display text-4xl font-bold mb-4">Ready for Your Best Round?</h2>
+        <p class="text-golf-300 text-lg mb-8">Book your tee time online or join our leaderboard by submitting your scores.</p>
+        <div class="flex flex-wrap gap-4 justify-center">
+            <a href="/bookings/" class="bg-golf-400 text-golf-950 text-lg font-bold px-8 py-3 rounded-xl hover:bg-golf-300 transition">Book Now</a>
+            {% if not user.is_authenticated %}
+            <a href="/golfers/signup/" class="border-2 border-golf-400 text-golf-300 text-lg font-bold px-8 py-3 rounded-xl hover:bg-golf-400/10 transition">Create Account</a>
+            {% else %}
+            <a href="/golfers/submit-score/" class="border-2 border-golf-400 text-golf-300 text-lg font-bold px-8 py-3 rounded-xl hover:bg-golf-400/10 transition">Submit Score</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

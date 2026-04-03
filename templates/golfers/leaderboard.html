@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Weekly Leaderboard - Cayman Golf Brixham{% endblock %}
+{% block content %}
+<section class="py-16 bg-gradient-to-br from-golf-800 to-golf-900 text-white text-center">
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="font-display text-5xl font-bold mb-2">🏆 Weekly Leaderboard</h1>
+        <p class="text-golf-200 text-lg">Best rounds this week. Think you can beat them?</p>
+    </div>
+</section>
+<section class="py-12">
+    <div class="max-w-4xl mx-auto px-4">
+        <h2 class="font-display text-2xl font-bold mb-6">This Week (w/c {{ week_start|date:"j M" }})</h2>
+        {% if week_best %}
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden mb-12">
+            {% for entry in week_best %}
+            <div class="flex items-center gap-4 px-6 py-4 {% if not forloop.last %}border-b border-gray-100{% endif %}">
+                {% if forloop.counter == 1 %}
+                <span class="text-2xl">🥇</span>
+                {% elif forloop.counter == 2 %}
+                <span class="text-2xl">🥈</span>
+                {% elif forloop.counter == 3 %}
+                <span class="text-2xl">🥉</span>
+                {% else %}
+                <span class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-sm">{{ forloop.counter }}</span>
+                {% endif %}
+                <div class="flex-1">
+                    <a href="/golfers/profile/{{ entry.golfer.user.username }}/" class="font-bold text-golf-900 hover:text-golf-600 transition">{{ entry.golfer.display_name }}</a>
+                </div>
+                <span class="font-display text-2xl font-bold text-golf-600">{{ entry.score }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-gray-50 rounded-xl p-8 text-center mb-12">
+            <p class="text-gray-500 text-lg mb-4">No scores this week yet.</p>
+            {% if user.is_authenticated %}
+            <a href="/golfers/submit-score/" class="bg-golf-600 text-white px-6 py-3 rounded-lg hover:bg-golf-700 transition font-bold">Be the first! Submit your score →</a>
+            {% else %}
+            <a href="/golfers/signup/" class="bg-golf-600 text-white px-6 py-3 rounded-lg hover:bg-golf-700 transition font-bold">Sign up and submit →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <h2 class="font-display text-2xl font-bold mb-6">All-Time Best Rounds</h2>
+        {% if all_time_best %}
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            {% for s in all_time_best %}
+            <div class="flex items-center gap-4 px-6 py-3 {% if not forloop.last %}border-b border-gray-100{% endif %}">
+                <span class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-sm">{{ forloop.counter }}</span>
+                <div class="flex-1">
+                    <a href="/golfers/profile/{{ s.golfer.user.username }}/" class="font-bold text-golf-900 hover:text-golf-600 transition">{{ s.golfer.display_name }}</a>
+                    <span class="text-gray-500 text-sm ml-2">{{ s.date|date:"j M Y" }}</span>
+                </div>
+                <span class="font-display text-xl font-bold text-golf-600">{{ s.total_score }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
