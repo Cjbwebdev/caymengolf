@@ -3,20 +3,15 @@
 {% block content %}
 
 <!-- HERO -->
-<section class="relative bg-cover bg-center h-[600px] flex items-center overflow-hidden" style="background-image: url('https://images.pexels.com/photos/247677/pexels-photo-247677.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');">
+<section class="relative h-[70vh] min-h-[500px] flex items-center overflow-hidden">
+    <img src="https://images.pexels.com/photos/12904803/pexels-photo-12904803.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Cayman Golf Course Teed Up" class="absolute inset-0 w-full h-full object-cover object-center">
     <div class="absolute inset-0 bg-black/60"></div>
-    <div class="absolute inset-0 opacity-10">
-        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1200 600"><circle cx="1050" cy="-100" r="300" fill="#22c55e" opacity="0.1"/><circle cx="-50" cy="300" r="200" fill="#22c55e" opacity="0.05"/></svg>
-    </div>
-    <div class="max-w-7xl mx-auto px-4 py-32 md:py-44 relative">
-        <div class="max-w-2xl">
-            <div class="inline-block bg-golf-500/20 border border-golf-400/30 rounded-full px-4 py-1 text-golf-300 text-sm mb-6">18-Hole Course, Churston Ferrers</div>
-            <h1 class="font-display text-5xl md:text-7xl font-bold leading-tight mb-6">A Great Day Out<br>at <span class="text-golf-400">Cayman Golf</span></h1>
-            <p class="text-lg md:text-xl text-golf-200 mb-10 leading-relaxed">18-hole, par 71 cayman course in the beautiful Devon countryside. Perfect for families, beginners and seasoned golfers alike.</p>
-            <div class="flex flex-wrap gap-4">
-                <a href="/bookings/" class="bg-golf-400 text-golf-950 text-lg font-bold px-8 py-3 rounded-xl hover:bg-golf-300 transition">Book a Tee Time</a>
-                <a href="/lessons/" class="border-2 border-golf-400 text-golf-300 text-lg font-bold px-8 py-3 rounded-xl hover:bg-golf-400/10 transition">PGA Lessons</a>
-            </div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-16 text-center">
+        <h1 class="font-display text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">A Great Day Out<br>at <span class="text-golf-400">Cayman Golf</span></h1>
+        <p class="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto drop-shadow-md">18-hole, par 71 cayman course in the beautiful Devon countryside. Perfect for families, beginners and seasoned golfers alike.</p>
+        <div class="flex flex-wrap gap-4 justify-center">
+            <a href="/bookings/" class="bg-golf-400 text-golf-950 text-lg font-bold px-10 py-3 rounded-lg hover:bg-golf-300 transition shadow-lg">Book a Tee Time</a>
+            <a href="/lessons/" class="bg-white/90 text-golf-900 text-lg font-bold px-10 py-3 rounded-lg hover:bg-gray-100 transition shadow-lg">PGA Lessons</a>
         </div>
     </div>
 </section>
@@ -96,11 +91,11 @@
         <h2 class="font-display text-4xl font-bold mb-4">Ready for Your Best Round?</h2>
         <p class="text-golf-300 text-lg mb-8">Book your tee time online or join our leaderboard by submitting your scores.</p>
         <div class="flex flex-wrap gap-4 justify-center">
-            <a href="/bookings/" class="bg-golf-400 text-golf-950 text-lg font-bold px-8 py-3 rounded-xl hover:bg-golf-300 transition">Book Now</a>
+            <a href="/bookings/" class="bg-golf-400 text-golf-950 text-lg font-bold px-8 py-3 rounded-lg hover:bg-golf-300 transition">Book Now</a>
             {% if not user.is_authenticated %}
-            <a href="/golfers/signup/" class="border-2 border-golf-400 text-golf-300 text-lg font-bold px-8 py-3 rounded-xl hover:bg-golf-400/10 transition">Create Account</a>
+            <a href="/golfers/signup/" class="border-2 border-golf-400 text-golf-300 text-lg font-bold px-8 py-3 rounded-lg hover:bg-golf-400/10 transition">Create Account</a>
             {% else %}
-            <a href="/golfers/submit-score/" class="border-2 border-golf-400 text-golf-300 text-lg font-bold px-8 py-3 rounded-xl hover:bg-golf-400/10 transition">Submit Score</a>
+            <a href="/golfers/submit-score/" class="border-2 border-golf-400 text-golf-300 text-lg font-bold px-8 py-3 rounded-lg hover:bg-golf-400/10 transition">Submit Score</a>
             {% endif %}
         </div>
     </div>
