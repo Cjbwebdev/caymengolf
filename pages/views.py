@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from bookings.views import booking_page as bp, lessons_page as lp
 from datetime import timedelta
 
 def home(request):
@@ -13,8 +14,7 @@ def about(request):
     return render(request, "pages/about.html")
 
 def bookings_page(request):
-    return redirect("bookings:booking")
+    return bp(request)
 
 def lessons_page(request):
-    from bookings.views import lesson_page
-    return lesson_page(request)
+    return lp(request)
