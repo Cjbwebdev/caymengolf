@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from datetime import timedelta
 
@@ -13,12 +13,8 @@ def about(request):
     return render(request, "pages/about.html")
 
 def bookings_page(request):
-    from bookings.models import TeeTime
-    date_str = request.GET.get("date", str(timezone.now().date()))
-    times = TeeTime.objects.filter(date=date_str, is_available=True).order_by("time")
-    return render(request, "pages/bookings.html", {"tee_times": times, "selected_date": date_str})
+    return redirect("bookings:booking")
 
 def lessons_page(request):
-    from lessons.models import LessonType
-    types = LessonType.objects.filter(is_active=True)
-    return render(request, "pages/lessons.html", {"lesson_types": types})
+    from bookings.views import lesson_page
+    return lesson_page(request)

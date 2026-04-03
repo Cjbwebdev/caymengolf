@@ -1,6 +1,5 @@
+from booking.views import lesson_page
 from django.shortcuts import render
 
-def lessons_page(request):
-    from lessons.models import LessonType
-    types = LessonType.objects.filter(is_active=True)
-    return render(request, "pages/lessons.html", {"lesson_types": types})
+def lessons_view(request):
+    return lesson_page(request)
