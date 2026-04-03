@@ -85,3 +85,15 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+
+# ── EMAIL CONFIGURATION ──
+# Set these values when ready to send real emails to Dan
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "smtp.gmail.com"  # or your provider
+# EMAIL_HOST_USER = "your@email.com"
+# EMAIL_HOST_PASSWORD = "your-password"
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = "bookings@caymangolf.site"
+EMAIL_RECIPIENT = "danleins@hotmail.co.uk"
