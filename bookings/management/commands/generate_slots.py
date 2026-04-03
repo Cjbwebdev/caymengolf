@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 import datetime
-from bookings.models import TeeTime, LessonType
+from bookings.models import TeeTime, LessonSlot
 
 class Command(BaseCommand):
     help = 'Generate 10-minute tee times and 45-minute lesson slots for the next 7 days.'

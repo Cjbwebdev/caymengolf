@@ -1,4 +1,4 @@
-from booking.views import lesson_page
+from bookings.views import lesson_page
 from django.shortcuts import render
 
 def lessons_view(request):
