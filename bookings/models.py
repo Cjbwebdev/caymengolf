@@ -14,13 +14,18 @@ class TeeTime(models.Model):
     def __str__(self):
         return f"{self.date} @ {self.time.strftime('%H:%M')}"
 
+    @property
+    def spots_remaining(self):
+        return self.max_players - self.booked_players
+
 class Booking(models.Model):
     tee_time = models.ForeignKey(TeeTime, on_delete=models.CASCADE, related_name="bookings")
     user = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name="bookings")
     num_players = models.IntegerField(default=1)
-    player_names = models.TextField()
+    player_names = models.TextField(help_text="Names of all players, one per line")
     notes = models.TextField(blank=True, default="")
+    is_cancelled = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.tee_time.date}"
+        return f"{self.user.username} - {self.tee_time.date} {self.tee_time.time.strftime('%H:%M')}"

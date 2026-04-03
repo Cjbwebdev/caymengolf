@@ -9,7 +9,6 @@
 </section>
 <section class="py-12">
     <div class="max-w-4xl mx-auto px-4">
-        <!-- Date picker -->
         <form method="get" class="flex gap-3 mb-8">
             <input type="date" name="date" value="{{ selected_date }}" class="border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500">
             <button type="submit" class="bg-golf-600 text-white px-6 py-3 rounded-lg hover:bg-golf-700 transition font-bold">Find Slots</button>
@@ -23,7 +22,7 @@
                     <div class="text-gray-500 text-sm">{{ t.spots_remaining }} spots remaining</div>
                 </div>
                 {% if user.is_authenticated %}
-                <a href="" class="bg-golf-600 text-white px-5 py-2 rounded-lg hover:bg-golf-700 transition text-sm font-bold">Book Slot</a>
+                <a href="/bookings/slot/{{ t.id }}/" class="bg-golf-600 text-white px-5 py-2 rounded-lg hover:bg-golf-700 transition text-sm font-bold">Book This Slot</a>
                 {% else %}
                 <a href="/accounts/login/" class="bg-golf-600 text-white px-5 py-2 rounded-lg hover:bg-golf-700 transition text-sm font-bold">Login to Book</a>
                 {% endif %}
@@ -32,7 +31,10 @@
         </div>
         {% else %}
         <div class="bg-gray-50 rounded-xl p-8 text-center">
-            <p class="text-gray-500">No available slots for this date. Try a different date!</p>
+            <p class="text-gray-500 mb-4">No available slots for this date.</p>
+            {% if user.is_staff %}
+            <a href="/admin/bookings/teetime/add/" class="text-golf-600 font-bold">Add Tee Times →</a>
+            {% endif %}
         </div>
         {% endif %}
     </div>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}My Bookings — Cayman Golf{% endblock %}
+{% block content %}
+<section class="py-16">
+    <div class="max-w-4xl mx-auto px-4">
+        <h1 class="font-display text-3xl font-bold mb-6">📅 My Bookings</h1>
+        {% if bookings %}
+        <div class="space-y-3">
+            {% for b in bookings %}
+            <div class="bg-white rounded-xl p-4 border border-gray-100 flex items-center justify-between shadow-sm">
+                <div>
+                    <p class="font-bold text-golf-900">{{ b.tee_time.date|date:"l, j F Y" }}</p>
+                    <p class="text-golf-600 font-display font-bold">{{ b.tee_time.time|time:"H:i" }}</p>
+                    <p class="text-gray-500 text-sm">{{ b.num_players }} player(s) — {{ b.player_names|truncatechars:40 }}</p>
+                </div>
+                {% if b.tee_time.date > today %}
+                <a href="/bookings/my-bookings/{{ b.id }}/cancel/" class="text-red-500 hover:text-red-700 font-bold text-sm">Cancel</a>
+                {% else %}
+                <span class="text-gray-400 text-sm">Completed</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-gray-50 rounded-xl p-8 text-center">
+            <p class="text-gray-500 mb-4">No bookings found.</p>
+            <a href="/bookings/" class="bg-golf-600 text-white px-6 py-2 rounded-lg hover:bg-golf-700 transition font-bold">Book a Tee Time</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

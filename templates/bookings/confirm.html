@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Confirm Booking — Cayman Golf{% endblock %}
+{% block content %}
+<section class="py-16">
+    <div class="max-w-xl mx-auto px-4">
+        <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+            <h1 class="font-display text-3xl font-bold mb-2">Confirm Your Booking</h1>
+            <div class="bg-golf-50 rounded-lg p-4 mb-6">
+                <p class="text-golf-800 font-bold">{{ tee_time.date|date:"l, j F Y" }}</p>
+                <p class="text-golf-600 text-2xl font-display font-bold">{{ tee_time.time|time:"H:i" }}</p>
+                <p class="text-gray-500 text-sm">Up to {{ tee_time.max_players }} players • {{ tee_time.spots_remaining }} spots left</p>
+            </div>
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Number of Players</label>
+                    <select name="num_players" class="w-full border border-gray-200 rounded-lg px-4 py-3">
+                        <option value="1">1 Player</option>
+                        <option value="2">2 Players</option>
+                        <option value="3">3 Players</option>
+                        <option value="4">4 Players</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Player Names</label>
+                    <textarea name="player_names" rows="3" placeholder="Enter names of all players (one per line)" required class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500">{{ user.username }}</textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Notes (optional)</label>
+                    <textarea name="notes" rows="2" placeholder="Any special requirements" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500"></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <a href="/bookings/" class="flex-1 text-center border border-gray-200 px-4 py-3 rounded-lg hover:bg-gray-50 transition font-bold">Cancel</a>
+                    <button type="submit" class="flex-1 bg-golf-600 text-white px-4 py-3 rounded-lg hover:bg-golf-700 transition font-bold">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
