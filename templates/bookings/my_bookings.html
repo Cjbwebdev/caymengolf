@@ -3,21 +3,33 @@
 {% block content %}
 <section class="py-16">
     <div class="max-w-4xl mx-auto px-4">
-        <h1 class="font-display text-3xl font-bold mb-6">📅 My Bookings</h1>
+        <h1 class="font-display text-3xl font-bold mb-6">My Bookings</h1>
         {% if bookings %}
         <div class="space-y-3">
             {% for b in bookings %}
             <div class="bg-white rounded-xl p-4 border border-gray-100 flex items-center justify-between shadow-sm">
                 <div>
-                    <p class="font-bold text-golf-900">{{ b.tee_time.date|date:"l, j F Y" }}</p>
-                    <p class="text-golf-600 font-display font-bold">{{ b.tee_time.time|time:"H:i" }}</p>
-                    <p class="text-gray-500 text-sm">{{ b.num_players }} player(s) — {{ b.player_names|truncatechars:40 }}</p>
+                    <p class="font-bold text-golf-900">
+                        {% if b.tee_time %}Tee Time — {{ b.tee_time.date|date:"l, j F Y" }}{% else %}Lesson — {{ b.lesson_slot.date|date:"l, j F Y" }}{% endif %}
+                    </p>
+                    <p class="text-golf-600 font-display font-bold">
+                        {% if b.tee_time %}{{ b.tee_time.time|time:"H:i" }} — {{ b.num_players }} player(s){% else %}{{ b.lesson_slot.time|time:"H:i" }} — 45 mins{% endif %}
+                    </p>
+                    <p class="text-gray-500 text-sm">£{{ b.total_price|default:"0.00" }} — {{ b.player_names|truncatechars:50 }}</p>
+                    {% if b.is_paid %}
+                        <span class="text-green-600 font-bold text-sm px-3 py-1 mt-1 inline-block bg-green-50 rounded-full text-xs">PAID</span>
+                    {% else %}
+                        <span class="text-orange-600 font-bold text-sm px-3 py-1 mt-1 inline-block bg-orange-50 rounded-full text-xs">AWAITING PAYMENT</span>
+                    {% endif %}
                 </div>
-                {% if b.tee_time.date > today %}
-                <a href="/bookings/my-bookings/{{ b.id }}/cancel/" class="text-red-500 hover:text-red-700 font-bold text-sm">Cancel</a>
-                {% else %}
-                <span class="text-gray-400 text-sm">Completed</span>
-                {% endif %}
+                <div class="flex flex-col gap-2 items-end">
+                    {% if not b.is_paid %}
+                    <a href="{% url 'billing:checkout_booking' b.id %}" class="bg-golf-600 text-white px-4 py-2 rounded-lg hover:bg-golf-700 transition font-bold text-sm">Pay £{{ b.total_price|default:"0.00" }}</a>
+                    {% endif %}
+                    {% if not b.is_cancelled %}
+                    <a href="/bookings/my-bookings/{{ b.id }}/cancel/" class="text-red-500 hover:text-red-700 font-bold text-sm">Cancel</a>
+                    {% endif %}
+                </div>
             </div>
             {% endfor %}
         </div>

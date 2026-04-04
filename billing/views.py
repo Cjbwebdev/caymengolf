@@ -13,8 +13,10 @@ SITE_URL = "https://caymangolf.site"
 
 
 @login_required
-def checkout_session(request):
-    booking_id = request.GET.get("booking")
+def checkout_session(request, booking_id=None):
+    # Accept booking_id from URL path or GET parameter
+    if not booking_id:
+        booking_id = request.GET.get("booking")
     if not booking_id:
         messages.error(request, "No booking selected for payment.")
         return redirect("home")
@@ -25,16 +27,20 @@ def checkout_session(request):
         messages.error(request, "Booking not found.")
         return redirect("home")
     
-    # Determine what they're paying for
+    # Determine amount based on booking
+    if booking.total_price:
+        amount_pence = int(float(booking.total_price) * 100)
+    elif booking.tee_time:
+        amount_pence = int(float(booking.tee_time.price) * booking.num_players * 100)
+    else:
+        amount_pence = 4500  # Default lesson price
+    
     if booking.tee_time:
         item_name = f"Tee Time - {booking.tee_time.date} at {booking.tee_time.time}"
-        price = 2500  # £25.00 in pence
     elif booking.lesson_slot:
         item_name = f"Lesson - {booking.lesson_slot.date} at {booking.lesson_slot.time} (45 mins)"
-        price = 4500  # £45.00 in pence
     else:
-        messages.error(request, "Booking has no associated slot.")
-        return redirect("home")
+        item_name = "Golf Booking"
     
     try:
         session = stripe.checkout.Session.create(
@@ -43,16 +49,18 @@ def checkout_session(request):
                 "price_data": {
                     "currency": "gbp",
                     "product_data": {"name": item_name},
-                    "unit_amount": price,
+                    "unit_amount": amount_pence,
                 },
                 "quantity": 1,
             }],
             mode="payment",
-            success_url=f"{SITE_URL}/billing/success/?session_id={{CHECKOUT_SESSION_ID}}",
+            success_url=f"{SITE_URL}/billing/success/?session_id=" + "{CHECKOUT_SESSION_ID}",
             cancel_url=f"{SITE_URL}/bookings/my-bookings/",
             customer_email=request.user.email,
             metadata={"booking_id": str(booking.id)},
         )
+        booking.stripe_session_id = session.id
+        booking.save()
         return redirect(session.url)
     except Exception as e:
         messages.error(request, f"Payment error: {str(e)}")

@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+# ── Default par values for each of the 18 holes at Cayman Golf Brixham ──
+DEFAULT_PAR = [4, 3, 5, 4, 4, 3, 4, 5, 4, 4, 3, 4, 5, 4, 3, 4, 4, 4]
+
+
 class GolferProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="golf_profile")
     display_name = models.CharField(max_length=100, blank=True)
@@ -53,13 +57,23 @@ class GolferProfile(models.Model):
 
 
 class Score(models.Model):
+    LEAGUE_CHOICES = [
+        ('all', 'All'),
+        ('junior', 'Junior (Under 18)'),
+        ('senior', 'Senior (55+)'),
+        ('female', 'Female'),
+    ]
     golfer = models.ForeignKey(GolferProfile, on_delete=models.CASCADE, related_name="scores")
     date = models.DateField()
     total_score = models.IntegerField()
     par = models.IntegerField(default=71)
     front_9 = models.IntegerField(null=True, blank=True)
     back_9 = models.IntegerField(null=True, blank=True)
+    hole_scores = models.JSONField(default=dict, blank=True, help_text="Dict of hole_number: score (1-18)")
     handicap_at_time = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
+    league = models.CharField(max_length=10, choices=LEAGUE_CHOICES, default='all')
+    course_conditions = models.CharField(max_length=30, blank=True, default='')
+    notes = models.TextField(blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -78,6 +92,18 @@ class Score(models.Model):
         if d < 0: return str(d)
         elif d == 0: return "E"
         else: return "+" + str(d)
+    
+    def auto_calc_handicap(self):
+        """Simple handicap from best 8 of last 20 rounds."""
+        golf = self.golfer
+        last_20 = golfer.golferprofile.scores.order_by("-date")[:20]
+        if last_20.count() < 3:
+            return None
+        diffs = sorted(s.total_score - s.par for s in last_20)
+        best_8 = diffs[:8]
+        if not best_8:
+            return None
+        return round(sum(best_8) / len(best_8) * 0.96, 1)
 
 
 class WeeklyLeaderboard(models.Model):
