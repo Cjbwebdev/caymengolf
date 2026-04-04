@@ -124,3 +124,53 @@ def leaderboard(request):
         "league": league,
         "league_label": league_label,
     })
+
+
+def golfer_profile(request, username):
+    """Public profile for any golfer — shows stats, best round, recent scores."""
+    from django.contrib.auth.models import User
+    from django.shortcuts import get_object_or_404
+    
+    user = get_object_or_404(User, username=username)
+    profile, _ = GolferProfile.objects.get_or_create(user=user)
+    scores = profile.scores.order_by("-date")[:10]
+    
+    return render(request, "golfers/profile.html", {
+        "profile": profile,
+        "scores": scores,
+        "viewing_other": username != request.user.username if request.user.is_authenticated else True,
+    })
+
+
+def signup_view(request):
+    """Custom signup that creates both User and GolferProfile."""
+    from django.contrib.auth.models import User
+    
+    if request.user.is_authenticated:
+        return redirect("golfers:my_profile")
+    
+    if request.method == "POST":
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password1", "")
+        password2 = request.POST.get("password2", "")
+        
+        if not email or not password:
+            return render(request, "golfers/signup.html", {"error": "Email and password required."})
+        
+        if password != password2:
+            return render(request, "golfers/signup.html", {"error": "Passwords do not match."})
+        
+        if User.objects.filter(email=email).exists():
+            return render(request, "golfers/signup.html", {"error": "Email already in use."})
+        
+        user = User.objects.create_user(username=username or email.split("@")[0], email=email, password=password)
+        from django.contrib.auth import login
+        login(request, user)
+        
+        # Auto-create golfer profile
+        GolferProfile.objects.get_or_create(user=user)
+        
+        return redirect("golfers:my_profile")
+    
+    return render(request, "golfers/signup.html")
