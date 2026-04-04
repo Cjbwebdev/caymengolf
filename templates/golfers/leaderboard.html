@@ -10,6 +10,13 @@
 <section class="py-12">
     <div class="max-w-4xl mx-auto px-4">
         <h2 class="font-display text-2xl font-bold mb-6">This Week (w/c {{ week_start|date:"j M" }})</h2>
+        <!-- League Filters -->
+        <div class="flex gap-2 mb-6 justify-center flex-wrap">
+            <a href="?league=all" class="px-4 py-2 rounded-full text-sm font-bold {% if league == 'all' %}bg-golf-600 text-white{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">All</a>
+            <a href="?league=junior" class="px-4 py-2 rounded-full text-sm font-bold {% if league == 'junior' %}bg-golf-600 text-white{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">Junior (< 18)</a>
+            <a href="?league=senior" class="px-4 py-2 rounded-full text-sm font-bold {% if league == 'senior' %}bg-golf-600 text-white{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">Senior (55+)</a>
+            <a href="?league=female" class="px-4 py-2 rounded-full text-sm font-bold {% if league == 'female' %}bg-golf-600 text-white{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">Female</a>
+        </div>
         {% if week_best %}
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden mb-12">
             {% for entry in week_best %}
