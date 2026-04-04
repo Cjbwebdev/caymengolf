@@ -62,16 +62,15 @@ def book_slot(request, time_id):
         )
         
         tee_time.booked_players += num
-        if tee_time.booked_players >= tee_time.max_players: 
-            tee_time.is_available = False
+        if tee_time.booked_players >= tee_time.max_players: tee_time.is_available = False
         tee_time.save()
         
         # Email Dan
-        try: send_mail("New Booking", f"Tee time for {num} on {tee_time.date} at {tee_time.time}", "support@cjbwebdevelopment.com", ["danleins@hotmail.co.uk"], fail_silently=True)
+        try: send_mail("New Tee Time Booking", f"Booking for {num} player(s) on {tee_time.date} at {tee_time.time}.\nCustomer: {request.user.email}\nTotal: £{price:.2f}", "support@cjbwebdevelopment.com", ["danleins@hotmail.co.uk"], fail_silently=True)
         except: pass
         
-        messages.success(request, f"Tee time booked! Please complete payment of £{price:.2f} to confirm.")
-        return redirect("billing:checkout")
+        messages.success(request, f"Booking reserved! Please complete payment of £{price:.2f} to confirm.")
+        return redirect("billing:checkout", booking_id=booking.id)
         
     return render(request, "bookings/confirm.html", {"tee_time": tee_time})
 
@@ -125,17 +124,19 @@ def cancel_booking(request, booking_id):
 def book_lesson(request, slot_id):
     slot = get_object_or_404(LessonSlot, pk=slot_id)
     if request.method == "POST":
-        Booking.objects.create(
+        price = slot.price
+        booking = Booking.objects.create(
             lesson_slot=slot, 
             user=request.user, 
             num_players=1, 
             player_names=request.user.username,
-            notes=request.POST.get("notes", "")
+            notes=request.POST.get("notes", ""),
+            total_price=price,
         )
         slot.is_available = False
         slot.save()
-        try: send_mail("New Lesson", f"Lesson booking on {slot.date} at {slot.time}", "support@cjbwebdevelopment.com", ["danleins@hotmail.co.uk"], fail_silently=True)
+        try: send_mail("New Lesson", f"Lesson booking on {slot.date} at {slot.time}\\nCustomer: {request.user.email}\\nTotal: £{price:.2f}", "support@cjbwebdevelopment.com", ["danleins@hotmail.co.uk"], fail_silently=True)
         except: pass
-        messages.success(request, "Lesson confirmed with Dan!")
-        return redirect("bookings:my_bookings")
+        messages.success(request, f"Lesson booked! Please complete payment of £{price:.2f} to confirm.")
+        return redirect("billing:checkout", booking_id=booking.id)
     return render(request, "bookings/lesson_confirm.html", {"slot": slot})
