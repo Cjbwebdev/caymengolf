@@ -1,1 +1,1 @@
-web: gunicorn core.wsgi --log-file -
+web: python manage.py migrate --noinput && gunicorn core.wsgi --log-file - --bind 0.0.0.0:$PORT
