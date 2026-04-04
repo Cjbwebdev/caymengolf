@@ -51,18 +51,27 @@ def book_slot(request, time_id):
             messages.error(request, f"Only {tee_time.spots_remaining} spots left.")
             return redirect("bookings:book_slot", time_id=tee_time.pk)
             
-        Booking.objects.create(tee_time=tee_time, user=request.user, num_players=num, player_names=request.POST.get("player_names", ""))
+        price = tee_time.price * num
+        
+        booking = Booking.objects.create(
+            tee_time=tee_time, 
+            user=request.user, 
+            num_players=num, 
+            player_names=request.POST.get("player_names", ""),
+            total_price=price,
+        )
         
         tee_time.booked_players += num
-        if tee_time.booked_players >= tee_time.max_players: tee_time.is_available = False
+        if tee_time.booked_players >= tee_time.max_players: 
+            tee_time.is_available = False
         tee_time.save()
         
         # Email Dan
         try: send_mail("New Booking", f"Tee time for {num} on {tee_time.date} at {tee_time.time}", "support@cjbwebdevelopment.com", ["danleins@hotmail.co.uk"], fail_silently=True)
         except: pass
         
-        messages.success(request, "Tee time confirmed!")
-        return redirect("golfers:my_profile")
+        messages.success(request, f"Tee time booked! Please complete payment of £{price:.2f} to confirm.")
+        return redirect("billing:checkout")
         
     return render(request, "bookings/confirm.html", {"tee_time": tee_time})
 
