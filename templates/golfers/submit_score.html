@@ -1,38 +1,125 @@
 {% extends "base.html" %}
-{% block title %}Submit Your Score — Cayman Golf{% endblock %}
+{% block title %}Submit Score - Cayman Golf{% endblock %}
 {% block content %}
-<section class="py-20">
-    <div class="max-w-xl mx-auto px-4">
-        <h1 class="font-display text-4xl font-bold text-golf-900 mb-2">🏌️ Submit Your Score</h1>
-        <p class="text-gray-600 mb-8">How did you play today?</p>
-        <form method="post" class="bg-white rounded-xl p-8 border border-gray-100 shadow-sm space-y-6">
-            {% csrf_token %}
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Date</label>
-                <input type="date" name="date" value="{{ today }}" required class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500 focus:border-transparent">
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Total Score *</label>
-                    <input type="number" name="total_score" placeholder="72" required min="20" max="150" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500 focus:border-transparent">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Par</label>
-                    <input type="number" name="par" value="71" required min="36" max="72" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500 focus:border-transparent">
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Front 9 (optional)</label>
-                    <input type="number" name="front_9" placeholder="36" min="1" max="70" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500 focus:border-transparent">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Back 9 (optional)</label>
-                    <input type="number" name="back_9" placeholder="35" min="1" max="70" class="w-full border border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-golf-500 focus:border-transparent">
-                </div>
-            </div>
-            <button type="submit" class="w-full bg-golf-600 text-white font-bold py-3 rounded-lg hover:bg-golf-700 transition text-lg">Submit Score</button>
-        </form>
+<style>
+.hole-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; max-width: 900px; margin: 0 auto; }
+.hole-cell { text-align: center; background: #fff; border: 1px solid #d1d5db; border-radius: 8px; padding: 6px; }
+.hole-num { font-size: 0.7rem; font-weight: 700; color: #6b7280; }
+.hole-par { font-size: 0.65rem; color: #15803d; }
+.hole-input { width: 100%; font-size: 1.1rem; font-weight: 700; text-align: center; border: none; outline: none; background: transparent; padding: 4px 0; }
+.hole-input:focus { border-bottom: 2px solid #15803d; }
+.summary-row { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+.summary-item { text-align: center; padding: 8px 16px; background: #f0fdf4; border-radius: 10px; min-width: 80px; }
+.summary-label { font-size: 0.65rem; color: #6b7280; text-transform: uppercase; }
+.summary-value { font-size: 1.3rem; font-weight: 800; color: #14532d; font-family: 'Oswald', sans-serif; }
+@media (max-width: 640px) {
+  .hole-grid { grid-template-columns: repeat(9, 1fr); gap: 3px; }
+  .hole-cell { padding: 2px; border-radius: 4px; }
+  .hole-input { font-size: 0.9rem; }
+}
+</style>
+
+<div class="max-w-4xl mx-auto px-4 py-20">
+  <h1 class="font-display text-3xl font-bold text-center mb-2" style="color: #14532d;">SUBMIT YOUR SCORE</h1>
+  <p class="text-center text-gray-500 mb-8">Hole-by-hole input — Cayman Golf Brixham (Par 71)</p>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <h2 class="font-display text-lg font-bold text-center mb-3">FRONT 9</h2>
+    <div class="hole-grid">
+      {% for p in par %}
+      {% if forloop.counter < 10 %}
+      <div class="hole-cell">
+        <div class="hole-num">{{ forloop.counter }}</div>
+        <div class="hole-par">Par {{ p }}</div>
+        <input type="number" name="hole_{{ forloop.counter }}" class="hole-input" min="1" max="15" required>
+      </div>
+      {% endif %}
+      {% endfor %}
     </div>
-</section>
+
+    <h2 class="font-display text-lg font-bold text-center mb-3 mt-6">BACK 9</h2>
+    <div class="hole-grid">
+      {% for p in par %}
+      {% if forloop.counter > 9 %}
+      <div class="hole-cell">
+        <div class="hole-num">{{ forloop.counter }}</div>
+        <div class="hole-par">Par {{ p }}</div>
+        <input type="number" name="hole_{{ forloop.counter }}" class="hole-input" min="1" max="15" required>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="summary-row" id="summaryRow">
+      <div class="summary-item">
+        <div class="summary-label">Front 9</div>
+        <div class="summary-value" id="frontSum">-</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Back 9</div>
+        <div class="summary-value" id="backSum">-</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Total</div>
+        <div class="summary-value" id="totalSum">-</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">To Par</div>
+        <div class="summary-value" id="toParSum">-</div>
+      </div>
+    </div>
+
+    <!-- League selection -->
+    <div class="mt-6 text-center">
+      <label class="text-sm font-medium text-gray-600">League:</label>
+      <select name="league" class="ml-2 px-3 py-1 border border-gray-300 rounded-lg text-sm">
+        <option value="all">All</option>
+        <option value="junior">Junior (Under 18)</option>
+        <option value="senior">Senior (55+)</option>
+        <option value="female">Female</option>
+      </select>
+    </div>
+
+    <div class="mt-4 text-center">
+      <input type="text" name="course_conditions" placeholder="Course conditions (dry, wet, firm)" class="px-3 py-1 border border-gray-300 rounded-lg text-sm w-64">
+    </div>
+    <div class="mt-4 text-center">
+      <textarea name="notes" placeholder="Notes (optional)" rows="2" class="px-3 py-1 border border-gray-300 rounded-lg text-sm w-64"></textarea>
+    </div>
+
+    <div class="mt-8 text-center">
+      <button type="submit" class="bg-golf-600 text-white px-8 py-3 rounded-xl hover:bg-golf-700 transition font-bold text-lg">SUBMIT SCORE</button>
+    </div>
+  </form>
+
+  <div class="mt-6 text-center">
+    <a href="/golfers/profile/" class="text-golf-600 text-sm hover:underline">Back to profile</a>
+  </div>
+</div>
+
+<script>
+var pars = {{ par|safe }};
+function calcTotals() {
+  var front=0, back=0, parTotal=0;
+  var allFilled = true;
+  for (var i=1; i<=18; i++) {
+    var v = parseInt(document.querySelector('[name=hole_'+i+']').value);
+    if (isNaN(v)) { allFilled = false; continue; }
+    if (i <= 9) front += v; else back += v;
+    parTotal += pars[i-1];
+  }
+  var total = front + back;
+  var tp = total - parTotal;
+  document.getElementById('frontSum').textContent = allFilled ? front : '-';
+  document.getElementById('backSum').textContent = allFilled ? back : '-';
+  document.getElementById('totalSum').textContent = allFilled ? total : '-';
+  if (allFilled) {
+    var s = tp > 0 ? '+' + tp : tp === 0 ? 'E' : String(tp);
+    document.getElementById('toParSum').textContent = s;
+  }
+}
+document.querySelectorAll('.hole-input').forEach(function(input) { input.addEventListener('input', calcTotals); });
+</script>
 {% endblock %}
