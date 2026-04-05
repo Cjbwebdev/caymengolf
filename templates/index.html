@@ -60,8 +60,8 @@
             <div class="flex items-center gap-4 px-6 py-4 {% if not forloop.last %}border-b border-gray-100{% endif %}">
                 <span class="w-10 h-10 rounded-full bg-golf-100 flex items-center justify-center font-bold text-golf-800 text-sm">{{ forloop.counter }}</span>
                 <div class="flex-1">
-                    <a href="/golfers/profile/{{ entry.golfer.user.username }}/" class="font-bold text-golf-900 hover:text-golf-600 transition">{{ entry.golfer.display_name }}</a>
-                    <span class="text-gray-500 text-sm ml-2">Par {{ entry.score }}</span>
+                    <a href="/golfers/profile/{{ entry.golfer.user.username }}/" class="font-bold text-golf-900 hover:text-golf-600 transition">{{ entry.golfer.display_name|default:entry.golfer.user.username }}</a>
+                    <span class="text-gray-500 text-sm ml-2">{{ entry.score }}</span>
                 </div>
                 <span class="font-display text-2xl font-bold text-golf-600">{{ entry.score }}</span>
             </div>
