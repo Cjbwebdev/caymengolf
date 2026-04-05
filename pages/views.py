@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import RedirectView
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 from datetime import timedelta
 from bookings.views import booking_page as bp, lessons_page as lp
 from golfers.models import WeeklyLeaderboard, Score
