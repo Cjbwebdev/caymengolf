@@ -1,8 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
-from golfers.models import GolferProfile, Score, DEFAULT_PAR
+from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate
+from datetime import timedelta
+from golfers.models import GolferProfile, Score, DEFAULT_PAR, WeeklyLeaderboard
 
 
 @login_required
@@ -11,7 +14,6 @@ def submit_score(request):
     today = timezone.now().date()
 
     if request.method == "POST":
-        # Collect hole-by-hole scores
         hole_scores = {}
         total = 0
         for hole in range(1, 19):
@@ -53,17 +55,13 @@ def submit_score(request):
             notes=notes,
         )
 
-        # Auto-update handicap
         handicap = score.auto_calc_handicap()
         if handicap is not None:
             profile.handicap_index = handicap
             profile.save()
 
-        # Update weekly leaderboard
-        from datetime import timedelta
         week_start = today - timedelta(days=today.weekday())
         week_end = week_start + timedelta(days=6)
-        from golfers.models import WeeklyLeaderboard
         best = Score.objects.filter(golfer=profile, date__gte=week_start, date__lte=week_end).order_by("total_score").first()
         if best:
             WeeklyLeaderboard.objects.update_or_create(
@@ -75,7 +73,6 @@ def submit_score(request):
         messages.success(request, f"Score submitted! {total} ({'+' if total - par_total >= 0 else ''}{total - par_total})")
         return redirect("golfers:my_profile")
 
-    # Pre-fill existing hole scores if editing
     existing = {}
     return render(request, "golfers/submit_score.html", {
         "par": DEFAULT_PAR,
@@ -95,6 +92,19 @@ def my_profile(request):
     })
 
 
+def golfer_profile(request, username):
+    """Public profile for any golfer — shows stats, best round, recent scores."""
+    user = get_object_or_404(User, username=username)
+    profile, _ = GolferProfile.objects.get_or_create(user=user)
+    scores = profile.scores.order_by("-date")[:10]
+    
+    return render(request, "golfers/profile.html", {
+        "profile": profile,
+        "scores": scores,
+        "viewing_other": username != request.user.username if request.user.is_authenticated else True,
+    })
+
+
 def leaderboard(request):
     league = request.GET.get("league", "all")
     scores = Score.objects.select_related("golfer").order_by("-date")
@@ -102,7 +112,6 @@ def leaderboard(request):
     if league != "all":
         scores = scores.filter(league=league)
     
-    # Group by golfer and get best recent score
     golfers = {}
     for s in scores:
         if s.golfer_id not in golfers:
@@ -123,29 +132,12 @@ def leaderboard(request):
         "golfers": sorted_golfers,
         "league": league,
         "league_label": league_label,
-    })
-
-
-def golfer_profile(request, username):
-    """Public profile for any golfer — shows stats, best round, recent scores."""
-    from django.contrib.auth.models import User
-    from django.shortcuts import get_object_or_404
-    
-    user = get_object_or_404(User, username=username)
-    profile, _ = GolferProfile.objects.get_or_create(user=user)
-    scores = profile.scores.order_by("-date")[:10]
-    
-    return render(request, "golfers/profile.html", {
-        "profile": profile,
-        "scores": scores,
-        "viewing_other": username != request.user.username if request.user.is_authenticated else True,
+        "weekly": False,
     })
 
 
 def signup_view(request):
     """Custom signup that creates both User and GolferProfile."""
-    from django.contrib.auth.models import User
-    
     if request.user.is_authenticated:
         return redirect("golfers:my_profile")
     
@@ -165,10 +157,7 @@ def signup_view(request):
             return render(request, "golfers/signup.html", {"error": "Email already in use."})
         
         user = User.objects.create_user(username=username or email.split("@")[0], email=email, password=password)
-        from django.contrib.auth import login
         login(request, user)
-        
-        # Auto-create golfer profile
         GolferProfile.objects.get_or_create(user=user)
         
         return redirect("golfers:my_profile")
