@@ -17,8 +17,8 @@ class LessonSlotAdmin(admin.ModelAdmin):
 
 
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('user', 'booking_type', 'date', 'num_players', 'is_paid', 'is_cancelled', 'total_price')
-    list_filter = ('is_paid', 'is_cancelled', 'date')
+    list_display = ('user', 'booking_type', 'booking_date', 'num_players', 'is_paid', 'is_cancelled', 'total_price')
+    list_filter = ('is_paid', 'is_cancelled', 'created_at')
     search_fields = ('user__username', 'user__email', 'player_names')
     ordering = ('-created_at',)
 
@@ -29,7 +29,7 @@ class BookingAdmin(admin.ModelAdmin):
             return f"Lesson ({obj.lesson_slot.time})"
         return "Unknown"
 
-    def date(self, obj):
+    def booking_date(self, obj):
         t = obj.tee_time or obj.lesson_slot
         return t.date if t else 'N/A'
 
