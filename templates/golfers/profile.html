@@ -86,13 +86,7 @@
                     <td class="py-3 text-sm">{{ s.date|date:"j M Y" }}</td>
                     <td class="py-3 text-center font-bold text-golf-900">{{ s.total_score }}</td>
                     <td class="py-3 text-center text-gray-500">{{ s.par }}</td>
-                    {% if s.total_score > s.par %}
-                    <td class="py-3 text-center text-red-600 font-bold">+{{ s.total_score|add:0|add:-s.par }}</td>
-                    {% elif s.total_score < s.par %}
-                    <td class="py-3 text-center text-green-600 font-bold">{{ s.total_score|add:0|add:-s.par }}</td>
-                    {% else %}
-                    <td class="py-3 text-center text-gray-900 font-bold">E</td>
-                    {% endif %}
+                    <td class="py-3 text-center font-bold {% if s.total_score > s.par %}text-red-600{% elif s.total_score < s.par %}text-green-600{% else %}text-gray-900{% endif %}">{{ s.to_par_str }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
