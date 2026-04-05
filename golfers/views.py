@@ -58,8 +58,12 @@ def submit_score(request):
 
         handicap = score.auto_calc_handicap()
         if handicap is not None:
+            # Save handicap at time of score submission (for progress tracking)
+            score.handicap_at_time = handicap
+            score.save(update_fields=["handicap_at_time"])
+            # Update profile with current handicap
             profile.handicap_index = handicap
-            profile.save()
+            profile.save(update_fields=["handicap_index"])
 
         week_start = today - timedelta(days=today.weekday())
         week_end = week_start + timedelta(days=6)

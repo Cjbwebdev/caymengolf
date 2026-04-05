@@ -46,14 +46,11 @@ class GolferProfile(models.Model):
         return running
 
     def calculate_handicap(self):
-        scores_qs = self.scores.order_by("-date")[:20]
-        if scores_qs.count() < 3:
-            return None
-        best_scores = sorted(scores_qs, key=lambda s: s.total_score - s.par)[:8]
-        if not best_scores:
-            return None
-        avg = sum(s.total_score - s.par for s in best_scores) / len(best_scores)
-        return round(avg * 0.96, 1)
+        """Delegate to Score.auto_calc_handicap for consistency."""
+        last_score = self.scores.order_by("-date").first()
+        if last_score:
+            return last_score.auto_calc_handicap()
+        return None
 
 
 class Score(models.Model):
@@ -94,16 +91,22 @@ class Score(models.Model):
         else: return "+" + str(d)
     
     def auto_calc_handicap(self):
-        """Simple handicap from best 8 of last 20 rounds."""
+        """Calculate handicap from best 8 differentials of last 20 scores.
+        Uses the WHS simplified method: average of 8 lowest score differentials × 0.96.
+        Requires at least 3 scores. Returns 0 if average is negative."""
         golf = self.golfer
         last_20 = golf.scores.order_by("-date")[:20]
-        if last_20.count() < 3:
+        count = last_20.count()
+        if count < 3:
             return None
+        # Score differentials (score - par), sorted lowest first
         diffs = sorted(s.total_score - s.par for s in last_20)
-        best_8 = diffs[:8]
-        if not best_8:
-            return None
-        return round(sum(best_8) / len(best_8) * 0.96, 1)
+        
+        # WHS-style: use fewer than 8 if fewer scores available
+        best_count = min(8, max(1, count))
+        best_n = diffs[:best_count]
+        handicap = round(sum(best_n) / len(best_n) * 0.96, 1)
+        return max(handicap, 0.0)  # Never negative
 
 
 class WeeklyLeaderboard(models.Model):
