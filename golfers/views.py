@@ -20,9 +20,9 @@ def submit_score(request):
             val = request.POST.get(f"hole_{hole}", "").strip()
             if val:
                 try:
-                    score = int(val)
-                    hole_scores[str(hole)] = score
-                    total += score
+                    score_val = int(val)
+                    hole_scores[str(hole)] = score_val
+                    total += score_val
                 except ValueError:
                     pass
         
@@ -70,7 +70,8 @@ def submit_score(request):
                 defaults={"score": best.total_score, "week_end": week_end},
             )
 
-        messages.success(request, f"Score submitted! {total} ({'+' if total - par_total >= 0 else ''}{total - par_total})")
+        par_str = "+" + str(total - par_total) if total >= par_total else str(total - par_total)
+        messages.success(request, f"Score submitted! {total} ({par_str})")
         return redirect("golfers:my_profile")
 
     existing = {}
@@ -93,11 +94,9 @@ def my_profile(request):
 
 
 def golfer_profile(request, username):
-    """Public profile for any golfer — shows stats, best round, recent scores."""
     user = get_object_or_404(User, username=username)
     profile, _ = GolferProfile.objects.get_or_create(user=user)
     scores = profile.scores.order_by("-date")[:10]
-    
     return render(request, "golfers/profile.html", {
         "profile": profile,
         "scores": scores,
@@ -106,38 +105,42 @@ def golfer_profile(request, username):
 
 
 def leaderboard(request):
+    """Leaderboard page with weekly best, all-time best, and league filters."""
     league = request.GET.get("league", "all")
-    scores = Score.objects.select_related("golfer").order_by("-date")
+    today = timezone.now().date()
+    week_start = today - timedelta(days=today.weekday())
+    week_end = week_start + timedelta(days=6)
     
+    qs = Score.objects.select_related("golfer__user").all()
     if league != "all":
-        scores = scores.filter(league=league)
+        qs = qs.filter(league=league)
     
-    golfers = {}
-    for s in scores:
-        if s.golfer_id not in golfers:
-            golfers[s.golfer_id] = {
-                "golfer": s.golfer,
-                "best": s,
-                "handicap": s.golfer.handicap_index,
-                "rounds": s.golfer.scores.count(),
-                "avg": s.golfer.average_score,
-            }
-        if s.total_score < golfers[s.golfer_id]["best"].total_score:
-            golfers[s.golfer_id]["best"] = s
+    # Weekly best: one entry per golfer
+    week_qs = qs.filter(date__gte=week_start, date__lte=week_end).order_by("total_score")
+    seen = {}
+    for s in week_qs:
+        if s.golfer_id not in seen:
+            seen[s.golfer_id] = s
+    week_best = sorted(seen.values(), key=lambda x: x.total_score)[:10]
     
-    sorted_golfers = sorted(golfers.values(), key=lambda x: x["best"].total_score)
-    league_label = dict(Score.LEAGUE_CHOICES).get(league, "All")
+    # All-time best: one entry per golfer
+    all_qs = qs.order_by("total_score")
+    seen2 = {}
+    for s in all_qs:
+        if s.golfer_id not in seen2:
+            seen2[s.golfer_id] = s
+    all_time_best = sorted(seen2.values(), key=lambda x: x.total_score)[:10]
     
     return render(request, "golfers/leaderboard.html", {
-        "golfers": sorted_golfers,
+        "week_best": week_best,
+        "all_time_best": all_time_best,
+        "week_start": week_start,
+        "week_end": week_end,
         "league": league,
-        "league_label": league_label,
-        "weekly": False,
     })
 
 
 def signup_view(request):
-    """Custom signup that creates both User and GolferProfile."""
     if request.user.is_authenticated:
         return redirect("golfers:my_profile")
     
@@ -149,17 +152,18 @@ def signup_view(request):
         
         if not email or not password:
             return render(request, "golfers/signup.html", {"error": "Email and password required."})
-        
         if password != password2:
             return render(request, "golfers/signup.html", {"error": "Passwords do not match."})
-        
         if User.objects.filter(email=email).exists():
             return render(request, "golfers/signup.html", {"error": "Email already in use."})
         
-        user = User.objects.create_user(username=username or email.split("@")[0], email=email, password=password)
+        user = User.objects.create_user(
+            username=username or email.split("@")[0],
+            email=email,
+            password=password
+        )
         login(request, user)
         GolferProfile.objects.get_or_create(user=user)
-        
         return redirect("golfers:my_profile")
     
     return render(request, "golfers/signup.html")

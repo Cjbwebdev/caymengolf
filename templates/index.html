@@ -1,10 +1,11 @@
+{% load static %}
 {% extends "base.html" %}
 {% block title %}Cayman Golf - 18 Hole Cayman Golf Course in Brixham, Devon{% endblock %}
 {% block content %}
 
 <!-- HERO -->
 <section class="relative h-[70vh] min-h-[500px] flex items-center overflow-hidden">
-    <img src="https://images.pexels.com/photos/12904803/pexels-photo-12904803.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Cayman Golf Course Teed Up" class="absolute inset-0 w-full h-full object-cover object-center">
+    <img src="{% static 'images/hero.jpg' %}" alt="Cayman Golf Course" class="absolute inset-0 w-full h-full object-cover object-center">
     <div class="absolute inset-0 bg-black/60"></div>
     <div class="relative z-10 max-w-7xl mx-auto px-4 py-16 text-center">
         <h1 class="font-display text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">A Great Day Out<br>at <span class="text-golf-400">Cayman Golf</span></h1>
