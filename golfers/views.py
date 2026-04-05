@@ -91,6 +91,11 @@ def my_profile(request):
     return render(request, "golfers/profile.html", {
         "profile": profile,
         "scores": scores,
+        "recent_scores": scores,
+        "rounds_played": profile.rounds_played,
+        "average_score": profile.average_score,
+        "best_round": profile.best_round,
+        "handicap_progress": profile.handicap_progress,
     })
 
 
@@ -101,6 +106,11 @@ def golfer_profile(request, username):
     return render(request, "golfers/profile.html", {
         "profile": profile,
         "scores": scores,
+        "recent_scores": scores,
+        "rounds_played": profile.rounds_played,
+        "average_score": profile.average_score,
+        "best_round": profile.best_round,
+        "handicap_progress": profile.handicap_progress,
         "viewing_other": username != request.user.username if request.user.is_authenticated else True,
     })
 

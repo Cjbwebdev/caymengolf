@@ -32,9 +32,10 @@
                 <span class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-sm">{{ forloop.counter }}</span>
                 {% endif %}
                 <div class="flex-1">
-                    <a href="/golfers/profile/{{ entry.golfer.user.username }}/" class="font-bold text-golf-900 hover:text-golf-600 transition">{{ entry.golfer.display_name }}</a>
+                    <a href="/golfers/profile/{{ entry.golfer.user.username }}/" class="font-bold text-golf-900 hover:text-golf-600 transition">{{ entry.golfer.display_name|default:entry.golfer.user.username }}</a>
+                    <span class="text-gray-500 text-sm ml-2">{{ entry.date|date:"j M" }}</span>
                 </div>
-                <span class="font-display text-2xl font-bold text-golf-600">{{ entry.score }}</span>
+                <span class="font-display text-2xl font-bold text-golf-600">{{ entry.total_score }}</span>
             </div>
             {% endfor %}
         </div>
@@ -56,7 +57,7 @@
             <div class="flex items-center gap-4 px-6 py-3 {% if not forloop.last %}border-b border-gray-100{% endif %}">
                 <span class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-sm">{{ forloop.counter }}</span>
                 <div class="flex-1">
-                    <a href="/golfers/profile/{{ s.golfer.user.username }}/" class="font-bold text-golf-900 hover:text-golf-600 transition">{{ s.golfer.display_name }}</a>
+                    <a href="/golfers/profile/{{ s.golfer.user.username }}/" class="font-bold text-golf-900 hover:text-golf-600 transition">{{ s.golfer.display_name|default:s.golfer.user.username }}</a>
                     <span class="text-gray-500 text-sm ml-2">{{ s.date|date:"j M Y" }}</span>
                 </div>
                 <span class="font-display text-xl font-bold text-golf-600">{{ s.total_score }}</span>
