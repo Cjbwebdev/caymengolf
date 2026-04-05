@@ -96,7 +96,7 @@ class Score(models.Model):
     def auto_calc_handicap(self):
         """Simple handicap from best 8 of last 20 rounds."""
         golf = self.golfer
-        last_20 = golfer.golferprofile.scores.order_by("-date")[:20]
+        last_20 = golf.scores.order_by("-date")[:20]
         if last_20.count() < 3:
             return None
         diffs = sorted(s.total_score - s.par for s in last_20)

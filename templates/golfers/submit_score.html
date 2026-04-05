@@ -82,8 +82,21 @@
       </select>
     </div>
 
-    <div class="mt-4 text-center">
-      <input type="text" name="course_conditions" placeholder="Course conditions (dry, wet, firm)" class="px-3 py-1 border border-gray-300 rounded-lg text-sm w-64">
+    <!-- Weather & Course Conditions -->
+    <div class="mt-6 text-center">
+      <label class="text-sm font-medium text-gray-600">Weather:</label>
+      <select name="weather" class="ml-2 px-3 py-1 border border-gray-300 rounded-lg text-sm">
+        <option value="">Select weather...</option>
+        <option value="☀️ Sunny & Warm">☀️ Sunny & Warm</option>
+        <option value="☀️ Fair / Mild">☀️ Fair / Mild</option>
+        <option value="⛅ Partly Cloudy">⛅ Partly Cloudy</option>
+        <option value="☁️ Overcast">☁️ Overcast</option>
+        <option value="🌧️ Light Rain">🌧️ Light Rain</option>
+        <option value="🌧️ Heavy Rain">🌧️ Heavy Rain</option>
+        <option value="💨 Windy">💨 Windy</option>
+        <option value="💨 Very Windy">💨 Very Windy</option>
+        <option value="❄️ Cold / Frosty">❄️ Cold / Frosty</option>
+      </select>
     </div>
     <div class="mt-4 text-center">
       <textarea name="notes" placeholder="Notes (optional)" rows="2" class="px-3 py-1 border border-gray-300 rounded-lg text-sm w-64"></textarea>

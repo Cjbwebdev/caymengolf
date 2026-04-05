@@ -39,8 +39,9 @@ def submit_score(request):
         back_9 = sum(hole_scores.get(str(h), 0) for h in range(10, 19))
         par_total = sum(DEFAULT_PAR)
         league = request.POST.get("league", "all")
-        course_conditions = request.POST.get("course_conditions", "")
+        weather = request.POST.get("weather", "")
         notes = request.POST.get("notes", "")
+        course_conditions = weather  # Store weather in course_conditions field
 
         score = Score.objects.create(
             golfer=profile,
