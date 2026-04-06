@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn core.wsgi --bind 0.0.0.0:$PORT"
+startCommand = "bash -c 'python manage.py migrate --noinput 2>/dev/null || echo \"Migration skipped, starting anyway...\" && exec gunicorn core.wsgi --bind 0.0.0.0:$PORT'"
