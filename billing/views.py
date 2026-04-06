@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 from bookings.models import TeeTime, LessonSlot, Booking
 
 if settings.STRIPE_SECRET_KEY:
@@ -88,6 +90,7 @@ def payment_success(request):
     return redirect("my_bookings")
 
 
+@csrf_exempt
 def webhook(request):
     payload = request.body
     sig = request.META.get("HTTP_STRIPE_SIGNATURE", "")
@@ -97,7 +100,7 @@ def webhook(request):
             payload, sig, settings.STRIPE_WEBHOOK_SECRET
         )
     except (ValueError, stripe.error.SignatureVerificationError):
-        return redirect("home", status=400)
+        return HttpResponse(status=400)
     
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
@@ -107,6 +110,22 @@ def webhook(request):
                 booking = Booking.objects.get(id=booking_id)
                 booking.is_paid = True
                 booking.save()
+                
+                # Populate Invoice record from webhook
+                from billing.models import Invoice
+                price = booking.total_price or (booking.tee_time.price if booking.tee_time else 45.00)
+                itype = "tee_time" if booking.tee_time else "lesson"
+                Invoice.objects.get_or_create(
+                    booking=booking,
+                    defaults={
+                        "user": booking.user,
+                        "invoice_type": itype,
+                        "amount": price,
+                        "stripe_session_id": session.get("id", ""),
+                        "status": "paid",
+                        "description": f"Booking for {booking.tee_time.date if booking.tee_time else booking.lesson_slot.date}",
+                    }
+                )
                 
                 # Send confirmation email
                 from django.core.mail import send_mail
@@ -119,7 +138,7 @@ def webhook(request):
             except Exception as e:
                 print(f"Webhook processing error: {e}")
     
-    return redirect("home", status=200)
+    return HttpResponse(status=200)
 
 
 @login_required

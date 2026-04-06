@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}My Invoices - Cayman Golf{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">My Invoices</h1>
+
+<a href="{% url 'billing:checkout' %}" class="btn btn-primary mb-4">Make a Payment</a>
+
+{% if invoices %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Booking Reference</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.created_at|date:"M d, Y" }}</td>
+                <td>#{{ invoice.booking.id|default:"N/A" }}</td>
+                <td>£{{ invoice.amount }}</td>
+                <td>
+                    <span class="badge {% if invoice.status == 'paid' %}badge-success{% else %}badge-warning{% endif %}">
+                        {{ invoice.status|title }}
+                    </span>
+                </td>
+                <td>
+                    {% if invoice.status != 'paid' %}
+                    <a href="{% url 'billing:checkout_booking' invoice.booking.id %}" class="btn btn-sm btn-primary">Pay Now</a>
+                    {% else %}
+                    <span class="text-success">✓ Paid</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <p>You don't have any invoices yet.</p>
+</div>
+{% endif %}
+{% endblock %}

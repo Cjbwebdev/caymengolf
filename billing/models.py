@@ -14,7 +14,8 @@ class Invoice(models.Model):
         ('lesson', 'Lesson Booking'),
     ]
     
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    booking = models.ForeignKey('bookings.Booking', on_delete=models.SET_NULL, null=True, blank=True)
     invoice_type = models.CharField(max_length=20, choices=INVOICE_TYPE)
     status = models.CharField(max_length=20, choices=INVOICE_STATUS, default='pending')
     amount = models.DecimalField(max_digits=8, decimal_places=2)
