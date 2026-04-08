@@ -1,0 +1,65 @@
+Subject: Your new golf club website is ready to preview, Dan!
+
+Hi Dan,
+
+I'd love for you to take a look at the website I've built for Cayman Golf Brixham. It's live now and fully working — click around, test it out, see what you think.
+
+🔗 VIEW IT HERE: [your live site URL]
+
+WHAT IT DOES FOR YOUR MEMBERS:
+
+📅 Online Tee Time Booking
+Members can browse and book their tee times on the website — no more phoning the pro shop early morning. It prevents double-bookings automatically and members get a confirmation email straight away.
+
+⛳ PGA Lessons Booking
+Your 45-minute lesson slots are bookable online too. Members pick their preferred date and time — no back and forth calls needed.
+
+🏆 Weekly Leaderboards + Scoring
+Members submit their scores hole-by-hole (just like GolfPad on their phone). The leaderboard updates live and auto-calculaps handicaps and rankings.
+
+👤 Player Profiles + Handicap Tracking
+Every member gets their own profile with all their rounds tracked over time. The system builds their scoring history, calculates their handicap automatically, and shows their personal bests — so players can see their progress and compete with each other. It's like having a digital scorecard for the whole club.
+
+🏅 Four Separate Leagues
+The leaderboards and scoring are split into four leagues so everybody competes fairly:
+• All Members — open to everyone
+• Junior — under 18s
+• Senior — 55+
+• Female
+
+This means a junior playing off 20 can compete against other juniors, not against a scratch golfer. Makes it fair and exciting for all levels and keeps the competitive side of the club alive.
+
+💳 Online Card Payments
+Members pay for tee times and lessons online by card. You get the money straight into your Stripe account. No more chasing people for cash at the course.
+
+WHAT YOU GET AS THE OWNER:
+
+You get a simple admin panel where you can:
+
+✅ See every booking — who booked what, when, for how many players
+✅ Cancel or change bookings if members phone to reschedule
+✅ Manage tee times — add or remove slots, block out dates or holidays
+✅ Manage lesson slots — set your weekly availability
+✅ View all payments — who's paid, total revenue, all in one place
+✅ Manage members — see profiles, scores, handicaps, league standings
+
+It's all straightforward — click buttons, read what's there. No code, no tech knowledge needed. The website runs itself day to day.
+
+WHAT MAKES IT WORTH YOUR TIME:
+
+Right now this is your preview version. If you want to go live for Cayman Golf, we can:
+
+• Connect it to your own domain name (caymangolf.co.uk or whatever you prefer)
+• Set up proper online payments with your Stripe account
+• Customise the colours, logo, and branding to match Cayman Golf
+• Put in the actual tee time schedule for your course
+• Add competitions, event bookings, or a pro shop if you want
+
+Take a proper look — book a tee time as a test, submit a score to the leaderboard, check out a player profile. It's all working live so you can experience it.
+
+Let me know what you think.
+
+Best regards,
+
+[Your name]
+cjbwebdevelopment.com
