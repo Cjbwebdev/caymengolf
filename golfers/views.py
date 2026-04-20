@@ -181,4 +181,4 @@ def signup_view(request):
         GolferProfile.objects.get_or_create(user=user)
         return redirect("golfers:my_profile")
     
-    return render(request, "golfers/signup.html")
+    return render(request, "registration/signup.html")
